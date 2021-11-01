@@ -2,5 +2,5 @@
 
 switch ReactDOM.querySelector("#root") {
 | Some(root) => ReactDOM.render(<App />, root)
-| None => () // do nothing
+| None => () // Do nothing if root element does not exist
 }
