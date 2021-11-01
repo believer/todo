@@ -25,3 +25,12 @@ test('display todo item and clear input when adding new todo', () => {
   expect(screen.getByText(/hello/i)).toBeInTheDocument()
   expect(screen.getByLabelText(/new todo/i)).toHaveValue('')
 })
+
+test('complete todo item when clicking checkbox', () => {
+  setup()
+
+  userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
+  userEvent.click(screen.getByRole('checkbox', { name: /hello/i }))
+
+  expect(screen.getByText(/hello 2021/i)).toBeInTheDocument()
+})

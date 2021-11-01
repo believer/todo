@@ -1,6 +1,24 @@
-type state = {todos: array<Todo.t>, input: string}
+type state = {todos: array<(float, Todo.t)>, input: string}
 
-type actions = AddTodo | RemoveTodo(int) | InputChange(string)
+type actions = AddTodo | RemoveTodo(int) | ToggleTodo(float) | InputChange(string)
+
+module TodoItem = {
+  @react.component
+  let make = (~todo, ~onToggle) => {
+    <li>
+      <label className="items-center flex space-x-2">
+        <input checked={Todo.isComplete(todo)} type_="checkbox" onChange={onToggle} />
+        <div>
+          {switch todo {
+          | Incomplete({content}) => React.string(content)
+          | Complete({content, completionDate}) =>
+            React.string(content ++ " " ++ completionDate->Js.Date.toISOString)
+          }}
+        </div>
+      </label>
+    </li>
+  }
+}
 
 @react.component
 let make = () => {
@@ -9,12 +27,22 @@ let make = () => {
     | AddTodo => {
         input: "",
         todos: state.todos->Belt.Array.concat([
-          Incomplete({content: state.input, id: Js.Date.make()->Js.Date.getTime}),
+          (Js.Date.make()->Js.Date.getTime, Incomplete({content: state.input})),
         ]),
       }
     | RemoveTodo(id) => {
         ...state,
         todos: state.todos->Belt.Array.keepWithIndex((_, i) => i != id),
+      }
+    | ToggleTodo(todoId) => {
+        ...state,
+        todos: state.todos->Belt.Array.map(((id, todo)) => {
+          if id === todoId {
+            (id, Todo.toggle(todo))
+          } else {
+            (id, todo)
+          }
+        }),
       }
     | InputChange(input) => {...state, input: input}
     }
@@ -41,12 +69,8 @@ let make = () => {
     | _ =>
       <ul>
         {state.todos
-        ->Belt.Array.map(todo => {
-          switch todo {
-          | Complete(_) => React.null
-          | Incomplete({content, id}) =>
-            <li key={Belt.Float.toString(id)}> {React.string(content)} </li>
-          }
+        ->Belt.Array.map(((id, todo)) => {
+          <TodoItem todo key={id->Belt.Float.toString} onToggle={_ => dispatch(ToggleTodo(id))} />
         })
         ->React.array}
       </ul>
