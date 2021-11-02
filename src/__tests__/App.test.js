@@ -67,3 +67,21 @@ test('can update a todo', () => {
   expect(screen.getByRole('button', { name: /goodbye/i })).toBeInTheDocument()
   expect(screen.queryByText(/hello/i)).not.toBeInTheDocument()
 })
+
+test('can search in todos', () => {
+  setup()
+
+  userEvent.type(screen.getByLabelText(/new todo/i), 'Good morning{enter}')
+  userEvent.type(screen.getByLabelText(/new todo/i), 'Goedemorgen{enter}')
+  userEvent.type(screen.getByLabelText(/new todo/i), 'God morgon{enter}')
+
+  expect(screen.getByLabelText(/good morning/i)).toBeInTheDocument()
+  expect(screen.getByLabelText(/goedemorgen/i)).toBeInTheDocument()
+  expect(screen.getByLabelText(/god morgon/i)).toBeInTheDocument()
+
+  userEvent.type(screen.getByLabelText(/search/i), 'goede')
+
+  expect(screen.queryByLabelText(/good morning/i)).not.toBeInTheDocument()
+  expect(screen.queryByLabelText(/god morgon/i)).not.toBeInTheDocument()
+  expect(screen.getByLabelText(/goedemorgen/i)).toBeInTheDocument()
+})

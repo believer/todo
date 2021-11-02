@@ -1,4 +1,4 @@
-type state = {todos: array<(string, Todo.t)>, input: string}
+type state = {todos: array<(string, Todo.t)>, input: string, searchQuery: string}
 
 type actions =
   | AddTodo
@@ -7,12 +7,14 @@ type actions =
   | InputChange(string)
   | ArchiveTodos
   | UpdateTodo(string, string)
+  | Search(string)
 
 @react.component
 let make = () => {
   let (state, dispatch) = React.useReducer((state, action) => {
     switch action {
     | AddTodo => {
+        ...state,
         input: "",
         todos: state.todos->Belt.Array.concat([
           (
@@ -50,15 +52,58 @@ let make = () => {
           }
         }),
       }
+    | Search(searchQuery) => {
+        ...state,
+        searchQuery: searchQuery,
+      }
     }
-  }, {todos: [], input: ""})
+  }, {todos: [], input: "", searchQuery: ""})
 
-  let incompleteTasks = state.todos->Belt.Array.keep(((_, todo)) => !Todo.isComplete(todo))
-  let completedTasks = state.todos->Belt.Array.keep(((_, todo)) => Todo.isComplete(todo))
+  let incompleteTasks = state.todos->Belt.Array.keep(((_, todo)) =>
+    switch (Todo.isComplete(todo), state.searchQuery) {
+    | (false, "") => true
+    | (false, query)
+      if Todo.content(todo)
+      ->Js.String2.toLowerCase
+      ->Js.String2.includes(query->Js.String2.toLowerCase) => true
+    | (false, _)
+    | (true, _) => false
+    }
+  )
+  let completedTasks = state.todos->Belt.Array.keep(((_, todo)) => {
+    switch (Todo.isComplete(todo), state.searchQuery) {
+    | (true, "") => true
+    | (true, query)
+      if Todo.content(todo)
+      ->Js.String2.toLowerCase
+      ->Js.String2.includes(query->Js.String2.toLowerCase) => true
+    | (true, _)
+    | (false, _) => false
+    }
+  })
+
+  let renderTodo = ((id, todo)) =>
+    <TodoItem
+      todo
+      key={id}
+      onToggle={_ => dispatch(ToggleTodo(id))}
+      onRemove={_ => dispatch(RemoveTodo(id))}
+      onUpdate={updatedTodo => dispatch(UpdateTodo(id, updatedTodo))}
+    />
 
   <div>
     <h1> {React.string("Tasks")} </h1>
     <h2> {React.string("TODO")} </h2>
+    <label htmlFor="search"> {React.string("Search")} </label>
+    <input
+      id="search"
+      type_="text"
+      onChange={event => {
+        let value = ReactEvent.Form.target(event)["value"]
+        dispatch(Search(value))
+      }}
+      value={state.searchQuery}
+    />
     <AddTodo
       id="new-todo"
       label="New todo"
@@ -75,38 +120,13 @@ let make = () => {
     />
     {switch Belt.Array.length(incompleteTasks) {
     | 0 => React.string("You don't have any todos")
-    | _ =>
-      <ul>
-        {incompleteTasks
-        ->Belt.Array.map(((id, todo)) => {
-          <TodoItem
-            todo
-            key={id}
-            onToggle={_ => dispatch(ToggleTodo(id))}
-            onRemove={_ => dispatch(RemoveTodo(id))}
-            onUpdate={updatedTodo => dispatch(UpdateTodo(id, updatedTodo))}
-          />
-        })
-        ->React.array}
-      </ul>
+    | _ => <ul> {incompleteTasks->Belt.Array.map(renderTodo)->React.array} </ul>
     }}
     {switch Belt.Array.length(completedTasks) {
     | 0 => React.null
     | _ => <>
         <h2> {React.string("Done")} </h2>
-        <ul>
-          {completedTasks
-          ->Belt.Array.map(((id, todo)) => {
-            <TodoItem
-              todo
-              key={id}
-              onToggle={_ => dispatch(ToggleTodo(id))}
-              onRemove={_ => dispatch(RemoveTodo(id))}
-              onUpdate={updatedTodo => dispatch(UpdateTodo(id, updatedTodo))}
-            />
-          })
-          ->React.array}
-        </ul>
+        <ul> {completedTasks->Belt.Array.map(renderTodo)->React.array} </ul>
         <button onClick={_ => dispatch(ArchiveTodos)}> {React.string("Archive todos")} </button>
       </>
     }}

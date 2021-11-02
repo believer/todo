@@ -19,14 +19,16 @@ function App(Props) {
                                 content: state.input
                               }
                             ]]),
-                      input: ""
+                      input: "",
+                      searchQuery: state.searchQuery
                     };
             } else {
               return {
                       todos: Belt_Array.keep(state.todos, (function (param) {
                               return !Todo.isComplete(param[1]);
                             })),
-                      input: state.input
+                      input: state.input,
+                      searchQuery: state.searchQuery
                     };
             }
           }
@@ -37,7 +39,8 @@ function App(Props) {
                         todos: Belt_Array.keep(state.todos, (function (param) {
                                 return param[0] !== id;
                               })),
-                        input: state.input
+                        input: state.input,
+                        searchQuery: state.searchQuery
                       };
             case /* ToggleTodo */1 :
                 var todoId = action._0;
@@ -57,12 +60,14 @@ function App(Props) {
                                         ];
                                 }
                               })),
-                        input: state.input
+                        input: state.input,
+                        searchQuery: state.searchQuery
                       };
             case /* InputChange */2 :
                 return {
                         todos: state.todos,
-                        input: action._0
+                        input: action._0,
+                        searchQuery: state.searchQuery
                       };
             case /* UpdateTodo */3 :
                 var updatedTodo = action._1;
@@ -83,25 +88,86 @@ function App(Props) {
                                         ];
                                 }
                               })),
-                        input: state.input
+                        input: state.input,
+                        searchQuery: state.searchQuery
+                      };
+            case /* Search */4 :
+                return {
+                        todos: state.todos,
+                        input: state.input,
+                        searchQuery: action._0
                       };
             
           }
         }), {
         todos: [],
-        input: ""
+        input: "",
+        searchQuery: ""
       });
   var dispatch = match[1];
   var state = match[0];
   var incompleteTasks = Belt_Array.keep(state.todos, (function (param) {
-          return !Todo.isComplete(param[1]);
+          var todo = param[1];
+          var match = Todo.isComplete(todo);
+          var match$1 = state.searchQuery;
+          if (match || !(match$1 === "" || Todo.content(todo).toLowerCase().includes(match$1.toLowerCase()))) {
+            return false;
+          } else {
+            return true;
+          }
         }));
   var completedTasks = Belt_Array.keep(state.todos, (function (param) {
-          return Todo.isComplete(param[1]);
+          var todo = param[1];
+          var match = Todo.isComplete(todo);
+          var match$1 = state.searchQuery;
+          if (match && (match$1 === "" || Todo.content(todo).toLowerCase().includes(match$1.toLowerCase()))) {
+            return true;
+          } else {
+            return false;
+          }
         }));
+  var renderTodo = function (param) {
+    var id = param[0];
+    return React.createElement(TodoItem.make, {
+                todo: param[1],
+                onToggle: (function (param) {
+                    return Curry._1(dispatch, {
+                                TAG: /* ToggleTodo */1,
+                                _0: id
+                              });
+                  }),
+                onRemove: (function (param) {
+                    return Curry._1(dispatch, {
+                                TAG: /* RemoveTodo */0,
+                                _0: id
+                              });
+                  }),
+                onUpdate: (function (updatedTodo) {
+                    return Curry._1(dispatch, {
+                                TAG: /* UpdateTodo */3,
+                                _0: id,
+                                _1: updatedTodo
+                              });
+                  }),
+                key: id
+              });
+  };
   var match$1 = incompleteTasks.length;
   var match$2 = completedTasks.length;
-  return React.createElement("div", undefined, React.createElement("h1", undefined, "Tasks"), React.createElement("h2", undefined, "TODO"), React.createElement(AddTodo.make, {
+  return React.createElement("div", undefined, React.createElement("h1", undefined, "Tasks"), React.createElement("h2", undefined, "TODO"), React.createElement("label", {
+                  htmlFor: "search"
+                }, "Search"), React.createElement("input", {
+                  id: "search",
+                  type: "text",
+                  value: state.searchQuery,
+                  onChange: (function ($$event) {
+                      var value = $$event.target.value;
+                      return Curry._1(dispatch, {
+                                  TAG: /* Search */4,
+                                  _0: value
+                                });
+                    })
+                }), React.createElement(AddTodo.make, {
                   label: "New todo",
                   id: "new-todo",
                   value: state.input,
@@ -118,57 +184,7 @@ function App(Props) {
                                   _0: value
                                 });
                     })
-                }), match$1 !== 0 ? React.createElement("ul", undefined, Belt_Array.map(incompleteTasks, (function (param) {
-                          var id = param[0];
-                          return React.createElement(TodoItem.make, {
-                                      todo: param[1],
-                                      onToggle: (function (param) {
-                                          return Curry._1(dispatch, {
-                                                      TAG: /* ToggleTodo */1,
-                                                      _0: id
-                                                    });
-                                        }),
-                                      onRemove: (function (param) {
-                                          return Curry._1(dispatch, {
-                                                      TAG: /* RemoveTodo */0,
-                                                      _0: id
-                                                    });
-                                        }),
-                                      onUpdate: (function (updatedTodo) {
-                                          return Curry._1(dispatch, {
-                                                      TAG: /* UpdateTodo */3,
-                                                      _0: id,
-                                                      _1: updatedTodo
-                                                    });
-                                        }),
-                                      key: id
-                                    });
-                        }))) : "You don't have any todos", match$2 !== 0 ? React.createElement(React.Fragment, undefined, React.createElement("h2", undefined, "Done"), React.createElement("ul", undefined, Belt_Array.map(completedTasks, (function (param) {
-                              var id = param[0];
-                              return React.createElement(TodoItem.make, {
-                                          todo: param[1],
-                                          onToggle: (function (param) {
-                                              return Curry._1(dispatch, {
-                                                          TAG: /* ToggleTodo */1,
-                                                          _0: id
-                                                        });
-                                            }),
-                                          onRemove: (function (param) {
-                                              return Curry._1(dispatch, {
-                                                          TAG: /* RemoveTodo */0,
-                                                          _0: id
-                                                        });
-                                            }),
-                                          onUpdate: (function (updatedTodo) {
-                                              return Curry._1(dispatch, {
-                                                          TAG: /* UpdateTodo */3,
-                                                          _0: id,
-                                                          _1: updatedTodo
-                                                        });
-                                            }),
-                                          key: id
-                                        });
-                            }))), React.createElement("button", {
+                }), match$1 !== 0 ? React.createElement("ul", undefined, Belt_Array.map(incompleteTasks, renderTodo)) : "You don't have any todos", match$2 !== 0 ? React.createElement(React.Fragment, undefined, React.createElement("h2", undefined, "Done"), React.createElement("ul", undefined, Belt_Array.map(completedTasks, renderTodo)), React.createElement("button", {
                         onClick: (function (param) {
                             return Curry._1(dispatch, /* ArchiveTodos */1);
                           })
