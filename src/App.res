@@ -91,24 +91,21 @@ let make = () => {
       onUpdate={updatedTodo => dispatch(UpdateTodo(id, updatedTodo))}
     />
 
-  <div>
-    <h1> {React.string("Tasks")} </h1>
+  <div className="mt-8 max-w-4xl mx-auto">
+    <h1 className="text-4xl font-bold"> {React.string("Tasks")} </h1>
     <h2> {React.string("TODO")} </h2>
-    <label htmlFor="search"> {React.string("Search")} </label>
-    <input
+    <Input
+      label="Search"
       id="search"
-      type_="text"
-      onChange={event => {
-        let value = ReactEvent.Form.target(event)["value"]
+      onChange={value => {
         dispatch(Search(value))
       }}
       value={state.searchQuery}
     />
-    <AddTodo
+    <Input
       id="new-todo"
       label="New todo"
-      onChange={event => {
-        let value = ReactEvent.Form.target(event)["value"]
+      onChange={value => {
         dispatch(InputChange(value))
       }}
       onKeyPress={event => {
@@ -125,6 +122,7 @@ let make = () => {
     {switch Belt.Array.length(completedTasks) {
     | 0 => React.null
     | _ => <>
+        <hr />
         <h2> {React.string("Done")} </h2>
         <ul> {completedTasks->Belt.Array.map(renderTodo)->React.array} </ul>
         <button onClick={_ => dispatch(ArchiveTodos)}> {React.string("Archive todos")} </button>

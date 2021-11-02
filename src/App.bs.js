@@ -2,8 +2,8 @@
 
 import * as Todo from "./Todo.bs.js";
 import * as Curry from "rescript/lib/es6/curry.js";
+import * as Input from "./Input.bs.js";
 import * as React from "react";
-import * as AddTodo from "./AddTodo.bs.js";
 import * as TodoItem from "./TodoItem.bs.js";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 
@@ -154,20 +154,21 @@ function App(Props) {
   };
   var match$1 = incompleteTasks.length;
   var match$2 = completedTasks.length;
-  return React.createElement("div", undefined, React.createElement("h1", undefined, "Tasks"), React.createElement("h2", undefined, "TODO"), React.createElement("label", {
-                  htmlFor: "search"
-                }, "Search"), React.createElement("input", {
+  return React.createElement("div", {
+              className: "mt-8 max-w-4xl mx-auto"
+            }, React.createElement("h1", {
+                  className: "text-4xl font-bold"
+                }, "Tasks"), React.createElement("h2", undefined, "TODO"), React.createElement(Input.make, {
+                  label: "Search",
                   id: "search",
-                  type: "text",
                   value: state.searchQuery,
-                  onChange: (function ($$event) {
-                      var value = $$event.target.value;
+                  onChange: (function (value) {
                       return Curry._1(dispatch, {
                                   TAG: /* Search */4,
                                   _0: value
                                 });
                     })
-                }), React.createElement(AddTodo.make, {
+                }), React.createElement(Input.make, {
                   label: "New todo",
                   id: "new-todo",
                   value: state.input,
@@ -177,14 +178,13 @@ function App(Props) {
                       }
                       
                     }),
-                  onChange: (function ($$event) {
-                      var value = $$event.target.value;
+                  onChange: (function (value) {
                       return Curry._1(dispatch, {
                                   TAG: /* InputChange */2,
                                   _0: value
                                 });
                     })
-                }), match$1 !== 0 ? React.createElement("ul", undefined, Belt_Array.map(incompleteTasks, renderTodo)) : "You don't have any todos", match$2 !== 0 ? React.createElement(React.Fragment, undefined, React.createElement("h2", undefined, "Done"), React.createElement("ul", undefined, Belt_Array.map(completedTasks, renderTodo)), React.createElement("button", {
+                }), match$1 !== 0 ? React.createElement("ul", undefined, Belt_Array.map(incompleteTasks, renderTodo)) : "You don't have any todos", match$2 !== 0 ? React.createElement(React.Fragment, undefined, React.createElement("hr", undefined), React.createElement("h2", undefined, "Done"), React.createElement("ul", undefined, Belt_Array.map(completedTasks, renderTodo)), React.createElement("button", {
                         onClick: (function (param) {
                             return Curry._1(dispatch, /* ArchiveTodos */1);
                           })
@@ -197,4 +197,4 @@ export {
   make ,
   
 }
-/* react Not a pure module */
+/* Input Not a pure module */
