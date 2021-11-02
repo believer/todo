@@ -24,9 +24,30 @@ function toggle(todo) {
   }
 }
 
+function content(todo) {
+  return todo.content;
+}
+
+function updateContent(todo, updatedTodo) {
+  if (todo.TAG === /* Complete */0) {
+    return {
+            TAG: /* Complete */0,
+            content: updatedTodo,
+            completionDate: todo.completionDate
+          };
+  } else {
+    return {
+            TAG: /* Incomplete */1,
+            content: updatedTodo
+          };
+  }
+}
+
 export {
   isComplete ,
   toggle ,
+  content ,
+  updateContent ,
   
 }
 /* No side effect */

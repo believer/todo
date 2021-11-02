@@ -22,7 +22,7 @@ test('display todo item and clear input when adding new todo', () => {
 
   userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
 
-  expect(screen.getByText(/hello/i)).toBeInTheDocument()
+  expect(screen.getByLabelText(/hello/i)).toBeInTheDocument()
   expect(screen.getByLabelText(/new todo/i)).toHaveValue('')
 })
 
@@ -51,5 +51,19 @@ test('remove a todo', () => {
   userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
   userEvent.click(screen.getByRole('button', { name: /remove todo/i }))
 
+  expect(screen.queryByText(/hello/i)).not.toBeInTheDocument()
+})
+
+test('can update a todo', () => {
+  setup()
+
+  userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
+  userEvent.click(screen.getByRole('button', { name: /hello/i }))
+  userEvent.type(
+    screen.getByRole('textbox', { name: /hello/i }),
+    '{selectall}Goodbye{enter}'
+  )
+
+  expect(screen.getByRole('button', { name: /goodbye/i })).toBeInTheDocument()
   expect(screen.queryByText(/hello/i)).not.toBeInTheDocument()
 })

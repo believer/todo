@@ -64,6 +64,27 @@ function App(Props) {
                         todos: state.todos,
                         input: action._0
                       };
+            case /* UpdateTodo */3 :
+                var updatedTodo = action._1;
+                var todoId$1 = action._0;
+                return {
+                        todos: Belt_Array.map(state.todos, (function (param) {
+                                var todo = param[1];
+                                var id = param[0];
+                                if (id === todoId$1) {
+                                  return [
+                                          id,
+                                          Todo.updateContent(todo, updatedTodo)
+                                        ];
+                                } else {
+                                  return [
+                                          id,
+                                          todo
+                                        ];
+                                }
+                              })),
+                        input: state.input
+                      };
             
           }
         }), {
@@ -113,6 +134,13 @@ function App(Props) {
                                                       _0: id
                                                     });
                                         }),
+                                      onUpdate: (function (updatedTodo) {
+                                          return Curry._1(dispatch, {
+                                                      TAG: /* UpdateTodo */3,
+                                                      _0: id,
+                                                      _1: updatedTodo
+                                                    });
+                                        }),
                                       key: id
                                     });
                         }))) : "You don't have any todos", match$2 !== 0 ? React.createElement(React.Fragment, undefined, React.createElement("h2", undefined, "Done"), React.createElement("ul", undefined, Belt_Array.map(completedTasks, (function (param) {
@@ -129,6 +157,13 @@ function App(Props) {
                                               return Curry._1(dispatch, {
                                                           TAG: /* RemoveTodo */0,
                                                           _0: id
+                                                        });
+                                            }),
+                                          onUpdate: (function (updatedTodo) {
+                                              return Curry._1(dispatch, {
+                                                          TAG: /* UpdateTodo */3,
+                                                          _0: id,
+                                                          _1: updatedTodo
                                                         });
                                             }),
                                           key: id

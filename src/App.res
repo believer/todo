@@ -1,7 +1,12 @@
 type state = {todos: array<(string, Todo.t)>, input: string}
 
 type actions =
-  AddTodo | RemoveTodo(string) | ToggleTodo(string) | InputChange(string) | ArchiveTodos
+  | AddTodo
+  | RemoveTodo(string)
+  | ToggleTodo(string)
+  | InputChange(string)
+  | ArchiveTodos
+  | UpdateTodo(string, string)
 
 @react.component
 let make = () => {
@@ -34,6 +39,16 @@ let make = () => {
     | ArchiveTodos => {
         ...state,
         todos: state.todos->Belt.Array.keep(((_, todo)) => !Todo.isComplete(todo)),
+      }
+    | UpdateTodo(todoId, updatedTodo) => {
+        ...state,
+        todos: state.todos->Belt.Array.map(((id, todo)) => {
+          if id === todoId {
+            (id, todo->Todo.updateContent(updatedTodo))
+          } else {
+            (id, todo)
+          }
+        }),
       }
     }
   }, {todos: [], input: ""})
@@ -69,6 +84,7 @@ let make = () => {
             key={id}
             onToggle={_ => dispatch(ToggleTodo(id))}
             onRemove={_ => dispatch(RemoveTodo(id))}
+            onUpdate={updatedTodo => dispatch(UpdateTodo(id, updatedTodo))}
           />
         })
         ->React.array}
@@ -86,6 +102,7 @@ let make = () => {
               key={id}
               onToggle={_ => dispatch(ToggleTodo(id))}
               onRemove={_ => dispatch(RemoveTodo(id))}
+              onUpdate={updatedTodo => dispatch(UpdateTodo(id, updatedTodo))}
             />
           })
           ->React.array}
