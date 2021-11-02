@@ -2,24 +2,6 @@ type state = {todos: array<(float, Todo.t)>, input: string}
 
 type actions = AddTodo | RemoveTodo(int) | ToggleTodo(float) | InputChange(string)
 
-module TodoItem = {
-  @react.component
-  let make = (~todo, ~onToggle) => {
-    <li>
-      <label className="items-center flex space-x-2">
-        <input checked={Todo.isComplete(todo)} type_="checkbox" onChange={onToggle} />
-        <div>
-          {switch todo {
-          | Incomplete({content}) => React.string(content)
-          | Complete({content, completionDate}) =>
-            React.string(content ++ " " ++ completionDate->Js.Date.toISOString)
-          }}
-        </div>
-      </label>
-    </li>
-  }
-}
-
 @react.component
 let make = () => {
   let (state, dispatch) = React.useReducer((state, action) => {
@@ -48,11 +30,15 @@ let make = () => {
     }
   }, {todos: [], input: ""})
 
+  let incompleteTasks = state.todos->Belt.Array.keep(((_, todo)) => !Todo.isComplete(todo))
+  let completedTasks = state.todos->Belt.Array.keep(((_, todo)) => Todo.isComplete(todo))
+
   <div>
-    <label htmlFor="new-todo"> {React.string("New todo")} </label>
-    <input
+    <h1> {React.string("Tasks")} </h1>
+    <h2> {React.string("TODO")} </h2>
+    <AddTodo
       id="new-todo"
-      type_="text"
+      label="New todo"
       onChange={event => {
         let value = ReactEvent.Form.target(event)["value"]
         dispatch(InputChange(value))
@@ -64,16 +50,29 @@ let make = () => {
       }}
       value={state.input}
     />
-    {switch Belt.Array.length(state.todos) {
+    {switch Belt.Array.length(incompleteTasks) {
     | 0 => React.string("You don't have any todos")
     | _ =>
       <ul>
-        {state.todos
+        {incompleteTasks
         ->Belt.Array.map(((id, todo)) => {
           <TodoItem todo key={id->Belt.Float.toString} onToggle={_ => dispatch(ToggleTodo(id))} />
         })
         ->React.array}
       </ul>
+    }}
+    {switch Belt.Array.length(completedTasks) {
+    | 0 => React.null
+    | _ => <>
+        <h2> {React.string("Done")} </h2>
+        <ul>
+          {completedTasks
+          ->Belt.Array.map(((id, todo)) => {
+            <TodoItem todo key={id->Belt.Float.toString} onToggle={_ => dispatch(ToggleTodo(id))} />
+          })
+          ->React.array}
+        </ul>
+      </>
     }}
   </div>
 }

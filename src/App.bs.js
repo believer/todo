@@ -3,25 +3,9 @@
 import * as Todo from "./Todo.bs.js";
 import * as Curry from "rescript/lib/es6/curry.js";
 import * as React from "react";
+import * as AddTodo from "./AddTodo.bs.js";
+import * as TodoItem from "./TodoItem.bs.js";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
-
-function App$TodoItem(Props) {
-  var todo = Props.todo;
-  var onToggle = Props.onToggle;
-  var tmp;
-  tmp = todo.TAG === /* Complete */0 ? todo.content + " " + todo.completionDate.toISOString() : todo.content;
-  return React.createElement("li", undefined, React.createElement("label", {
-                  className: "items-center flex space-x-2"
-                }, React.createElement("input", {
-                      checked: Todo.isComplete(todo),
-                      type: "checkbox",
-                      onChange: onToggle
-                    }), React.createElement("div", undefined, tmp)));
-}
-
-var TodoItem = {
-  make: App$TodoItem
-};
 
 function App(Props) {
   var match = React.useReducer((function (state, action) {
@@ -79,12 +63,17 @@ function App(Props) {
       });
   var dispatch = match[1];
   var state = match[0];
-  var match$1 = state.todos.length;
-  return React.createElement("div", undefined, React.createElement("label", {
-                  htmlFor: "new-todo"
-                }, "New todo"), React.createElement("input", {
+  var incompleteTasks = Belt_Array.keep(state.todos, (function (param) {
+          return !Todo.isComplete(param[1]);
+        }));
+  var completedTasks = Belt_Array.keep(state.todos, (function (param) {
+          return Todo.isComplete(param[1]);
+        }));
+  var match$1 = incompleteTasks.length;
+  var match$2 = completedTasks.length;
+  return React.createElement("div", undefined, React.createElement("h1", undefined, "Tasks"), React.createElement("h2", undefined, "TODO"), React.createElement(AddTodo.make, {
+                  label: "New todo",
                   id: "new-todo",
-                  type: "text",
                   value: state.input,
                   onKeyPress: (function ($$event) {
                       if ($$event.key === "Enter") {
@@ -99,9 +88,9 @@ function App(Props) {
                                   _0: value
                                 });
                     })
-                }), match$1 !== 0 ? React.createElement("ul", undefined, Belt_Array.map(state.todos, (function (param) {
+                }), match$1 !== 0 ? React.createElement("ul", undefined, Belt_Array.map(incompleteTasks, (function (param) {
                           var id = param[0];
-                          return React.createElement(App$TodoItem, {
+                          return React.createElement(TodoItem.make, {
                                       todo: param[1],
                                       onToggle: (function (param) {
                                           return Curry._1(dispatch, {
@@ -111,13 +100,24 @@ function App(Props) {
                                         }),
                                       key: String(id)
                                     });
-                        }))) : "You don't have any todos");
+                        }))) : "You don't have any todos", match$2 !== 0 ? React.createElement(React.Fragment, undefined, React.createElement("h2", undefined, "Done"), React.createElement("ul", undefined, Belt_Array.map(completedTasks, (function (param) {
+                              var id = param[0];
+                              return React.createElement(TodoItem.make, {
+                                          todo: param[1],
+                                          onToggle: (function (param) {
+                                              return Curry._1(dispatch, {
+                                                          TAG: /* ToggleTodo */1,
+                                                          _0: id
+                                                        });
+                                            }),
+                                          key: String(id)
+                                        });
+                            })))) : null);
 }
 
 var make = App;
 
 export {
-  TodoItem ,
   make ,
   
 }
