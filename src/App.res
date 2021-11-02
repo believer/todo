@@ -1,6 +1,7 @@
-type state = {todos: array<(float, Todo.t)>, input: string}
+type state = {todos: array<(string, Todo.t)>, input: string}
 
-type actions = AddTodo | RemoveTodo(int) | ToggleTodo(float) | InputChange(string) | ArchiveTodos
+type actions =
+  AddTodo | RemoveTodo(string) | ToggleTodo(string) | InputChange(string) | ArchiveTodos
 
 @react.component
 let make = () => {
@@ -9,12 +10,15 @@ let make = () => {
     | AddTodo => {
         input: "",
         todos: state.todos->Belt.Array.concat([
-          (Js.Date.make()->Js.Date.getTime, Incomplete({content: state.input})),
+          (
+            Js.Date.make()->Js.Date.getTime->Belt.Float.toString,
+            Incomplete({content: state.input}),
+          ),
         ]),
       }
     | RemoveTodo(id) => {
         ...state,
-        todos: state.todos->Belt.Array.keepWithIndex((_, i) => i != id),
+        todos: state.todos->Belt.Array.keep(((todoId, _)) => todoId !== id),
       }
     | ToggleTodo(todoId) => {
         ...state,
@@ -60,7 +64,12 @@ let make = () => {
       <ul>
         {incompleteTasks
         ->Belt.Array.map(((id, todo)) => {
-          <TodoItem todo key={id->Belt.Float.toString} onToggle={_ => dispatch(ToggleTodo(id))} />
+          <TodoItem
+            todo
+            key={id}
+            onToggle={_ => dispatch(ToggleTodo(id))}
+            onRemove={_ => dispatch(RemoveTodo(id))}
+          />
         })
         ->React.array}
       </ul>
@@ -72,7 +81,12 @@ let make = () => {
         <ul>
           {completedTasks
           ->Belt.Array.map(((id, todo)) => {
-            <TodoItem todo key={id->Belt.Float.toString} onToggle={_ => dispatch(ToggleTodo(id))} />
+            <TodoItem
+              todo
+              key={id}
+              onToggle={_ => dispatch(ToggleTodo(id))}
+              onRemove={_ => dispatch(RemoveTodo(id))}
+            />
           })
           ->React.array}
         </ul>

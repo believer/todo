@@ -6,6 +6,7 @@ import * as React from "react";
 function TodoItem(Props) {
   var todo = Props.todo;
   var onToggle = Props.onToggle;
+  var onRemove = Props.onRemove;
   var tmp;
   tmp = todo.TAG === /* Complete */0 ? todo.content + " " + todo.completionDate.toISOString() : todo.content;
   return React.createElement("li", undefined, React.createElement("label", {
@@ -14,7 +15,9 @@ function TodoItem(Props) {
                       checked: Todo.isComplete(todo),
                       type: "checkbox",
                       onChange: onToggle
-                    }), React.createElement("div", undefined, tmp)));
+                    }), React.createElement("div", undefined, tmp)), React.createElement("button", {
+                  onClick: onRemove
+                }, "Remove todo"));
 }
 
 var make = TodoItem;

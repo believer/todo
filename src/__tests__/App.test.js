@@ -35,7 +35,7 @@ test('complete todo item when clicking checkbox', () => {
   expect(screen.getByText(/hello 2021/i)).toBeInTheDocument()
 })
 
-test('can archive tasks', () => {
+test('completed tasks can be archived', () => {
   setup()
 
   userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
@@ -43,4 +43,13 @@ test('can archive tasks', () => {
   userEvent.click(screen.getByRole('button', { name: /archive todos/i }))
 
   expect(screen.queryByText(/hello 2021/i)).not.toBeInTheDocument()
+})
+
+test('remove a todo', () => {
+  setup()
+
+  userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
+  userEvent.click(screen.getByRole('button', { name: /remove todo/i }))
+
+  expect(screen.queryByText(/hello/i)).not.toBeInTheDocument()
 })

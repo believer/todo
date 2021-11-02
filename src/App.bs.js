@@ -13,7 +13,7 @@ function App(Props) {
             if (action === /* AddTodo */0) {
               return {
                       todos: Belt_Array.concat(state.todos, [[
-                              new Date().getTime(),
+                              String(new Date().getTime()),
                               {
                                 TAG: /* Incomplete */1,
                                 content: state.input
@@ -34,8 +34,8 @@ function App(Props) {
             case /* RemoveTodo */0 :
                 var id = action._0;
                 return {
-                        todos: Belt_Array.keepWithIndex(state.todos, (function (param, i) {
-                                return i !== id;
+                        todos: Belt_Array.keep(state.todos, (function (param) {
+                                return param[0] !== id;
                               })),
                         input: state.input
                       };
@@ -107,7 +107,13 @@ function App(Props) {
                                                       _0: id
                                                     });
                                         }),
-                                      key: String(id)
+                                      onRemove: (function (param) {
+                                          return Curry._1(dispatch, {
+                                                      TAG: /* RemoveTodo */0,
+                                                      _0: id
+                                                    });
+                                        }),
+                                      key: id
                                     });
                         }))) : "You don't have any todos", match$2 !== 0 ? React.createElement(React.Fragment, undefined, React.createElement("h2", undefined, "Done"), React.createElement("ul", undefined, Belt_Array.map(completedTasks, (function (param) {
                               var id = param[0];
@@ -119,7 +125,13 @@ function App(Props) {
                                                           _0: id
                                                         });
                                             }),
-                                          key: String(id)
+                                          onRemove: (function (param) {
+                                              return Curry._1(dispatch, {
+                                                          TAG: /* RemoveTodo */0,
+                                                          _0: id
+                                                        });
+                                            }),
+                                          key: id
                                         });
                             }))), React.createElement("button", {
                         onClick: (function (param) {

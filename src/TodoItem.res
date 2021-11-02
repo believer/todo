@@ -1,5 +1,5 @@
 @react.component
-let make = (~todo, ~onToggle) => {
+let make = (~todo, ~onToggle, ~onRemove) => {
   <li>
     <label className="items-center flex space-x-2">
       <input checked={Todo.isComplete(todo)} type_="checkbox" onChange={onToggle} />
@@ -11,5 +11,6 @@ let make = (~todo, ~onToggle) => {
         }}
       </div>
     </label>
+    <button onClick=onRemove> {React.string("Remove todo")} </button>
   </li>
 }
