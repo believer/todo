@@ -10,16 +10,25 @@ import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 function App(Props) {
   var match = React.useReducer((function (state, action) {
           if (typeof action === "number") {
-            return {
-                    todos: Belt_Array.concat(state.todos, [[
-                            new Date().getTime(),
-                            {
-                              TAG: /* Incomplete */1,
-                              content: state.input
-                            }
-                          ]]),
-                    input: ""
-                  };
+            if (action === /* AddTodo */0) {
+              return {
+                      todos: Belt_Array.concat(state.todos, [[
+                              new Date().getTime(),
+                              {
+                                TAG: /* Incomplete */1,
+                                content: state.input
+                              }
+                            ]]),
+                      input: ""
+                    };
+            } else {
+              return {
+                      todos: Belt_Array.keep(state.todos, (function (param) {
+                              return !Todo.isComplete(param[1]);
+                            })),
+                      input: state.input
+                    };
+            }
           }
           switch (action.TAG | 0) {
             case /* RemoveTodo */0 :
@@ -112,7 +121,11 @@ function App(Props) {
                                             }),
                                           key: String(id)
                                         });
-                            })))) : null);
+                            }))), React.createElement("button", {
+                        onClick: (function (param) {
+                            return Curry._1(dispatch, /* ArchiveTodos */1);
+                          })
+                      }, "Archive todos")) : null);
 }
 
 var make = App;

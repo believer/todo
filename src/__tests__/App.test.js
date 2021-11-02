@@ -34,3 +34,13 @@ test('complete todo item when clicking checkbox', () => {
 
   expect(screen.getByText(/hello 2021/i)).toBeInTheDocument()
 })
+
+test('can archive tasks', () => {
+  setup()
+
+  userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
+  userEvent.click(screen.getByRole('checkbox', { name: /hello/i }))
+  userEvent.click(screen.getByRole('button', { name: /archive todos/i }))
+
+  expect(screen.queryByText(/hello 2021/i)).not.toBeInTheDocument()
+})

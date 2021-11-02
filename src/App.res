@@ -1,6 +1,6 @@
 type state = {todos: array<(float, Todo.t)>, input: string}
 
-type actions = AddTodo | RemoveTodo(int) | ToggleTodo(float) | InputChange(string)
+type actions = AddTodo | RemoveTodo(int) | ToggleTodo(float) | InputChange(string) | ArchiveTodos
 
 @react.component
 let make = () => {
@@ -27,6 +27,10 @@ let make = () => {
         }),
       }
     | InputChange(input) => {...state, input: input}
+    | ArchiveTodos => {
+        ...state,
+        todos: state.todos->Belt.Array.keep(((_, todo)) => !Todo.isComplete(todo)),
+      }
     }
   }, {todos: [], input: ""})
 
@@ -72,6 +76,7 @@ let make = () => {
           })
           ->React.array}
         </ul>
+        <button onClick={_ => dispatch(ArchiveTodos)}> {React.string("Archive todos")} </button>
       </>
     }}
   </div>
