@@ -1,31 +1,43 @@
-type state = {todos: array<(string, Todo.t)>, input: string, searchQuery: string}
+module ID: {
+  type t
+  let fromString: string => t
+  let toString: t => string
+} = {
+  type t = string
+
+  let fromString = id => id
+  let toString = id => id
+}
+
+type state = {todos: array<(ID.t, Todo.t)>, input: string, searchQuery: string}
 
 type actions =
   | AddTodo
-  | RemoveTodo(string)
-  | ToggleTodo(string)
-  | InputChange(string)
+  | AddTodoChange(string)
+  | RemoveTodo(ID.t)
+  | ToggleTodo(ID.t)
+  | UpdateTodo(ID.t, string)
   | ArchiveTodos
-  | UpdateTodo(string, string)
   | Search(string)
 
 @react.component
 let make = () => {
   let (state, dispatch) = React.useReducer((state, action) => {
     switch action {
+    | AddTodoChange(input) => {...state, input: input}
     | AddTodo => {
         ...state,
         input: "",
         todos: state.todos->Belt.Array.concat([
           (
-            Js.Date.make()->Js.Date.getTime->Belt.Float.toString,
+            Js.Date.make()->Js.Date.getTime->Belt.Float.toString->ID.fromString,
             Incomplete({content: state.input}),
           ),
         ]),
       }
     | RemoveTodo(id) => {
         ...state,
-        todos: state.todos->Belt.Array.keep(((todoId, _)) => todoId !== id),
+        todos: state.todos->Belt.Array.keep(((todoId, _)) => id !== todoId),
       }
     | ToggleTodo(todoId) => {
         ...state,
@@ -37,7 +49,6 @@ let make = () => {
           }
         }),
       }
-    | InputChange(input) => {...state, input: input}
     | ArchiveTodos => {
         ...state,
         todos: state.todos->Belt.Array.keep(((_, todo)) => !Todo.isComplete(todo)),
@@ -59,41 +70,20 @@ let make = () => {
     }
   }, {todos: [], input: "", searchQuery: ""})
 
-  let incompleteTasks = state.todos->Belt.Array.keep(((_, todo)) =>
-    switch (Todo.isComplete(todo), state.searchQuery) {
-    | (false, "") => true
-    | (false, query)
-      if Todo.content(todo)
-      ->Js.String2.toLowerCase
-      ->Js.String2.includes(query->Js.String2.toLowerCase) => true
-    | (false, _)
-    | (true, _) => false
-    }
-  )
-  let completedTasks = state.todos->Belt.Array.keep(((_, todo)) => {
-    switch (Todo.isComplete(todo), state.searchQuery) {
-    | (true, "") => true
-    | (true, query)
-      if Todo.content(todo)
-      ->Js.String2.toLowerCase
-      ->Js.String2.includes(query->Js.String2.toLowerCase) => true
-    | (true, _)
-    | (false, _) => false
-    }
-  })
+  let incompleteTasks = Todo.incomplete(state.todos, state.searchQuery)
+  let completedTasks = Todo.completed(state.todos, state.searchQuery)
 
   let renderTodo = ((id, todo)) =>
     <TodoItem
       todo
-      key={id}
+      key={ID.toString(id)}
       onToggle={_ => dispatch(ToggleTodo(id))}
       onRemove={_ => dispatch(RemoveTodo(id))}
       onUpdate={updatedTodo => dispatch(UpdateTodo(id, updatedTodo))}
     />
 
-  <div className="mt-8 max-w-4xl mx-auto">
-    <h1 className="text-4xl font-bold"> {React.string("Tasks")} </h1>
-    <h2> {React.string("TODO")} </h2>
+  <div className="mt-8 max-w-sm mx-auto">
+    <Typography.H1> {React.string("Tasks")} </Typography.H1>
     <Input
       label="Search"
       id="search"
@@ -102,11 +92,12 @@ let make = () => {
       }}
       value={state.searchQuery}
     />
+    <Typography.H2> {React.string("TODO")} </Typography.H2>
     <Input
       id="new-todo"
       label="New todo"
       onChange={value => {
-        dispatch(InputChange(value))
+        dispatch(AddTodoChange(value))
       }}
       onKeyPress={event => {
         if ReactEvent.Keyboard.key(event) === "Enter" {
@@ -122,8 +113,7 @@ let make = () => {
     {switch Belt.Array.length(completedTasks) {
     | 0 => React.null
     | _ => <>
-        <hr />
-        <h2> {React.string("Done")} </h2>
+        <Typography.H2> {React.string("Done")} </Typography.H2>
         <ul> {completedTasks->Belt.Array.map(renderTodo)->React.array} </ul>
         <button onClick={_ => dispatch(ArchiveTodos)}> {React.string("Archive todos")} </button>
       </>

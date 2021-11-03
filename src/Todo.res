@@ -25,3 +25,26 @@ let updateContent = (todo, updatedTodo) =>
   | Complete(todo) => Complete({...todo, content: updatedTodo})
   | Incomplete(_) => Incomplete({content: updatedTodo})
   }
+
+let contentMatchesSearch = (todo, query) =>
+  content(todo)->Js.String2.toLowerCase->Js.String2.includes(query->Js.String2.toLowerCase)
+
+let completed = (todos, query) =>
+  todos->Belt.Array.keep(((_, todo)) => {
+    switch (isComplete(todo), query) {
+    | (true, "") => true
+    | (true, query) if contentMatchesSearch(todo, query) => true
+    | (true, _)
+    | (false, _) => false
+    }
+  })
+
+let incomplete = (todos, query) =>
+  todos->Belt.Array.keep(((_, todo)) =>
+    switch (isComplete(todo), query) {
+    | (false, "") => true
+    | (false, query) if contentMatchesSearch(todo, query) => true
+    | (false, _)
+    | (true, _) => false
+    }
+  )
