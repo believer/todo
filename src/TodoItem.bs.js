@@ -57,7 +57,7 @@ function TodoItem(Props) {
     var tmp$1;
     tmp$1 = todo.TAG === /* Complete */0 ? React.createElement("span", {
             className: "text-xs text-gray-400 block mt-1"
-          }, " " + DateTime.make(Caml_option.some(todo.completionDate), "sv-SE", undefined, undefined)) : null;
+          }, " " + DateTime.make(Caml_option.some(todo.completionDate), "sv-SE", DateTime.Options.make(undefined, undefined, undefined, undefined, undefined, "short", "short", undefined), undefined)) : null;
     tmp = React.createElement("button", {
           className: "justify-between flex-1 text-left overflow-hidden text-sm py-2",
           onClick: (function (param) {

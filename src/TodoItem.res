@@ -21,7 +21,17 @@ let make = (~todo, ~onToggle, ~onRemove, ~onUpdate) => {
         | Complete({completionDate}) =>
           <span className="text-xs text-gray-400 block mt-1">
             {React.string(
-              " " ++ Intl.DateTime.make(~date=completionDate, ~locale=Some("sv-SE"), ()),
+              " " ++
+              Intl.DateTime.make(
+                ~date=completionDate,
+                ~locale=Some("sv-SE"),
+                ~options=Intl.DateTime.Options.make(
+                  ~dateStyle=Some(#short),
+                  ~timeStyle=Some(#short),
+                  (),
+                ),
+                (),
+              ),
             )}
           </span>
         | Incomplete(_) => React.null
