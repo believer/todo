@@ -82,7 +82,7 @@ let make = () => {
       onUpdate={updatedTodo => dispatch(UpdateTodo(id, updatedTodo))}
     />
 
-  <div className="mt-8 max-w-sm mx-auto">
+  <div className="mt-8 max-w-sm mx-5 md:mx-auto">
     <Typography.H1> {React.string("Tasks")} </Typography.H1>
     <Input
       label="Search"
@@ -100,7 +100,7 @@ let make = () => {
           dispatch(AddTodoChange(value))
         }}
         onKeyPress={event => {
-          if ReactEvent.Keyboard.key(event) === "Enter" {
+          if ReactEvent.Keyboard.key(event) === "Enter" && state.input !== "" {
             dispatch(AddTodo)
           }
         }}

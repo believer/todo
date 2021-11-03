@@ -37,12 +37,15 @@ let make = (~todo, ~onToggle, ~onRemove, ~onUpdate) => {
             setTodoContent(_ => value)
           }}
           onKeyPress={event => {
-            if ReactEvent.Keyboard.key(event) === "Enter" {
-              onUpdate(todoContent)
+            switch (ReactEvent.Keyboard.key(event), Js.String2.trim(todoContent)) {
+            | ("Enter", "") => ()
+            | ("Enter", content) =>
+              onUpdate(content)
               setTodoState(_ => Idle)
+            | _ => ()
             }
           }}
-          value={todoContent}
+          value={Js.String2.trim(todoContent)}
         />
       </label>
     }}

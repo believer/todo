@@ -28,15 +28,20 @@ function TodoItem(Props) {
               className: "w-full",
               autoFocus: true,
               type: "text",
-              value: todoContent,
+              value: todoContent.trim(),
               onKeyPress: (function ($$event) {
-                  if ($$event.key === "Enter") {
-                    Curry._1(onUpdate, todoContent);
-                    return Curry._1(setTodoState, (function (param) {
-                                  return /* Idle */0;
-                                }));
+                  var match = $$event.key;
+                  var match$1 = todoContent.trim();
+                  if (match !== "Enter") {
+                    return ;
                   }
-                  
+                  if (match$1 === "") {
+                    return ;
+                  }
+                  Curry._1(onUpdate, match$1);
+                  return Curry._1(setTodoState, (function (param) {
+                                return /* Idle */0;
+                              }));
                 }),
               onChange: (function ($$event) {
                   var value = $$event.target.value;

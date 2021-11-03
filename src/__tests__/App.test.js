@@ -87,3 +87,26 @@ test('can search in todos', () => {
   expect(screen.queryByLabelText(/god morgon/i)).not.toBeInTheDocument()
   expect(screen.getByLabelText(/goedemorgen/i)).toBeInTheDocument()
 })
+
+test('can not add empty todos', () => {
+  setup()
+
+  userEvent.type(screen.getByLabelText(/new todo/i), '{enter}')
+
+  expect(screen.getByText(/you don't have any todos/i)).toBeInTheDocument()
+})
+
+test('can not update todos with empty value', () => {
+  setup()
+
+  userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
+  userEvent.click(screen.getByRole('button', { name: /hello/i }))
+  // enter, enter to check for new lines
+  userEvent.type(
+    screen.getByRole('textbox', { name: /hello/i }),
+    '{selectall}{del}{enter}{enter}'
+  )
+
+  // Textbox hasn't closed because empty items are not allowed
+  expect(screen.getByRole('textbox', { name: /hello/i })).toBeInTheDocument()
+})

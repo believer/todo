@@ -204,7 +204,7 @@ function App(Props) {
                 }, "Archive todos")));
   }
   return React.createElement("div", {
-              className: "mt-8 max-w-sm mx-auto"
+              className: "mt-8 max-w-sm mx-5 md:mx-auto"
             }, React.createElement(Typography.H1.make, {
                   children: "Tasks"
                 }), React.createElement(Input.make, {
@@ -224,7 +224,7 @@ function App(Props) {
                       id: "new-todo",
                       value: state.input,
                       onKeyPress: (function ($$event) {
-                          if ($$event.key === "Enter") {
+                          if ($$event.key === "Enter" && state.input !== "") {
                             return Curry._1(dispatch, /* AddTodo */0);
                           }
                           
