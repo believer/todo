@@ -153,7 +153,7 @@ function App(Props) {
   var match$2 = state.searchQuery;
   var tmp;
   tmp = match$1 !== 0 ? React.createElement("ul", {
-          className: "mt-4"
+          className: "mt-4 space-y-1"
         }, Belt_Array.map(incompleteTasks, renderTodo)) : (
       match$2 === "" ? React.createElement(EmptyState.NoTodos.make, {}) : React.createElement(EmptyState.NoSearchResults.make, {
               query: state.searchQuery
@@ -193,7 +193,7 @@ function App(Props) {
     tmp$1 = React.createElement(React.Fragment, undefined, React.createElement(Typography.H2.make, {
               children: "Done"
             }), React.createElement("ul", {
-              className: "mt-4"
+              className: "mt-4 space-y-1"
             }, Belt_Array.map(completedTasks, renderTodo)), React.createElement("div", {
               className: "flex justify-end"
             }, React.createElement("button", {

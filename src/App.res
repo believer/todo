@@ -111,7 +111,10 @@ let make = () => {
     {switch (Belt.Array.length(incompleteTasks), state.searchQuery) {
     | (0, "") => <EmptyState.NoTodos />
     | (0, _) => <EmptyState.NoSearchResults query={state.searchQuery} />
-    | _ => <ul className="mt-4"> {incompleteTasks->Belt.Array.map(renderTodo)->React.array} </ul>
+    | _ =>
+      <ul className="mt-4 space-y-1">
+        {incompleteTasks->Belt.Array.map(renderTodo)->React.array}
+      </ul>
     }}
     {switch (Belt.Array.length(state.todos), Belt.Array.length(completedTasks), state.searchQuery) {
     | (_, 0, "")
@@ -122,7 +125,9 @@ let make = () => {
       </>
     | _ => <>
         <Typography.H2> {React.string("Done")} </Typography.H2>
-        <ul className="mt-4"> {completedTasks->Belt.Array.map(renderTodo)->React.array} </ul>
+        <ul className="mt-4 space-y-1">
+          {completedTasks->Belt.Array.map(renderTodo)->React.array}
+        </ul>
         <div className="flex justify-end">
           <button
             className="mt-4 bg-red-100 text-red-800 rounded px-2 py-1"
