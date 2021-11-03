@@ -6,6 +6,21 @@ import * as Input from "./Input.bs.js";
 import * as React from "react";
 import * as TodoItem from "./TodoItem.bs.js";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
+import * as EmptyState from "./EmptyState.bs.js";
+import * as Typography from "./Typography.bs.js";
+
+function fromString(id) {
+  return id;
+}
+
+function toString(id) {
+  return id;
+}
+
+var ID = {
+  fromString: fromString,
+  toString: toString
+};
 
 function App(Props) {
   var match = React.useReducer((function (state, action) {
@@ -33,16 +48,22 @@ function App(Props) {
             }
           }
           switch (action.TAG | 0) {
-            case /* RemoveTodo */0 :
+            case /* AddTodoChange */0 :
+                return {
+                        todos: state.todos,
+                        input: action._0,
+                        searchQuery: state.searchQuery
+                      };
+            case /* RemoveTodo */1 :
                 var id = action._0;
                 return {
                         todos: Belt_Array.keep(state.todos, (function (param) {
-                                return param[0] !== id;
+                                return id !== param[0];
                               })),
                         input: state.input,
                         searchQuery: state.searchQuery
                       };
-            case /* ToggleTodo */1 :
+            case /* ToggleTodo */2 :
                 var todoId = action._0;
                 return {
                         todos: Belt_Array.map(state.todos, (function (param) {
@@ -61,12 +82,6 @@ function App(Props) {
                                 }
                               })),
                         input: state.input,
-                        searchQuery: state.searchQuery
-                      };
-            case /* InputChange */2 :
-                return {
-                        todos: state.todos,
-                        input: action._0,
                         searchQuery: state.searchQuery
                       };
             case /* UpdateTodo */3 :
@@ -106,39 +121,21 @@ function App(Props) {
       });
   var dispatch = match[1];
   var state = match[0];
-  var incompleteTasks = Belt_Array.keep(state.todos, (function (param) {
-          var todo = param[1];
-          var match = Todo.isComplete(todo);
-          var match$1 = state.searchQuery;
-          if (match || !(match$1 === "" || Todo.content(todo).toLowerCase().includes(match$1.toLowerCase()))) {
-            return false;
-          } else {
-            return true;
-          }
-        }));
-  var completedTasks = Belt_Array.keep(state.todos, (function (param) {
-          var todo = param[1];
-          var match = Todo.isComplete(todo);
-          var match$1 = state.searchQuery;
-          if (match && (match$1 === "" || Todo.content(todo).toLowerCase().includes(match$1.toLowerCase()))) {
-            return true;
-          } else {
-            return false;
-          }
-        }));
+  var incompleteTasks = Todo.incomplete(state.todos, state.searchQuery);
+  var completedTasks = Todo.completed(state.todos, state.searchQuery);
   var renderTodo = function (param) {
     var id = param[0];
     return React.createElement(TodoItem.make, {
                 todo: param[1],
                 onToggle: (function (param) {
                     return Curry._1(dispatch, {
-                                TAG: /* ToggleTodo */1,
+                                TAG: /* ToggleTodo */2,
                                 _0: id
                               });
                   }),
                 onRemove: (function (param) {
                     return Curry._1(dispatch, {
-                                TAG: /* RemoveTodo */0,
+                                TAG: /* RemoveTodo */1,
                                 _0: id
                               });
                   }),
@@ -153,12 +150,64 @@ function App(Props) {
               });
   };
   var match$1 = incompleteTasks.length;
-  var match$2 = completedTasks.length;
+  var match$2 = state.searchQuery;
+  var tmp;
+  tmp = match$1 !== 0 ? React.createElement("ul", {
+          className: "mt-4"
+        }, Belt_Array.map(incompleteTasks, renderTodo)) : (
+      match$2 === "" ? React.createElement(EmptyState.NoTodos.make, {}) : React.createElement(EmptyState.NoSearchResults.make, {
+              query: state.searchQuery
+            })
+    );
+  var match$3 = state.todos.length;
+  var match$4 = completedTasks.length;
+  var match$5 = state.searchQuery;
+  var tmp$1;
+  var exit = 0;
+  var exit$1 = 0;
+  var exit$2 = 0;
+  if (match$4 !== 0 || match$5 !== "") {
+    exit$2 = 3;
+  } else {
+    tmp$1 = null;
+  }
+  if (exit$2 === 3) {
+    if (match$3 !== 0 || match$4 !== 0) {
+      exit$1 = 2;
+    } else {
+      tmp$1 = null;
+    }
+  }
+  if (exit$1 === 2) {
+    if (match$4 !== 0 || match$3 <= 0) {
+      exit = 1;
+    } else {
+      tmp$1 = React.createElement(React.Fragment, undefined, React.createElement(Typography.H2.make, {
+                children: "Done"
+              }), React.createElement(EmptyState.NoSearchResults.make, {
+                query: state.searchQuery
+              }));
+    }
+  }
+  if (exit === 1) {
+    tmp$1 = React.createElement(React.Fragment, undefined, React.createElement(Typography.H2.make, {
+              children: "Done"
+            }), React.createElement("ul", {
+              className: "mt-4"
+            }, Belt_Array.map(completedTasks, renderTodo)), React.createElement("div", {
+              className: "flex justify-end"
+            }, React.createElement("button", {
+                  className: "mt-4 bg-red-100 text-red-800 rounded px-2 py-1",
+                  onClick: (function (param) {
+                      return Curry._1(dispatch, /* ArchiveTodos */1);
+                    })
+                }, "Archive todos")));
+  }
   return React.createElement("div", {
-              className: "mt-8 max-w-4xl mx-auto"
-            }, React.createElement("h1", {
-                  className: "text-4xl font-bold"
-                }, "Tasks"), React.createElement("h2", undefined, "TODO"), React.createElement(Input.make, {
+              className: "mt-8 max-w-sm mx-auto"
+            }, React.createElement(Typography.H1.make, {
+                  children: "Tasks"
+                }), React.createElement(Input.make, {
                   label: "Search",
                   id: "search",
                   value: state.searchQuery,
@@ -168,32 +217,33 @@ function App(Props) {
                                   _0: value
                                 });
                     })
-                }), React.createElement(Input.make, {
-                  label: "New todo",
-                  id: "new-todo",
-                  value: state.input,
-                  onKeyPress: (function ($$event) {
-                      if ($$event.key === "Enter") {
-                        return Curry._1(dispatch, /* AddTodo */0);
-                      }
-                      
-                    }),
-                  onChange: (function (value) {
-                      return Curry._1(dispatch, {
-                                  TAG: /* InputChange */2,
-                                  _0: value
-                                });
-                    })
-                }), match$1 !== 0 ? React.createElement("ul", undefined, Belt_Array.map(incompleteTasks, renderTodo)) : "You don't have any todos", match$2 !== 0 ? React.createElement(React.Fragment, undefined, React.createElement("hr", undefined), React.createElement("h2", undefined, "Done"), React.createElement("ul", undefined, Belt_Array.map(completedTasks, renderTodo)), React.createElement("button", {
-                        onClick: (function (param) {
-                            return Curry._1(dispatch, /* ArchiveTodos */1);
-                          })
-                      }, "Archive todos")) : null);
+                }), React.createElement("div", {
+                  className: "mt-2"
+                }, React.createElement(Input.make, {
+                      label: "New todo",
+                      id: "new-todo",
+                      value: state.input,
+                      onKeyPress: (function ($$event) {
+                          if ($$event.key === "Enter") {
+                            return Curry._1(dispatch, /* AddTodo */0);
+                          }
+                          
+                        }),
+                      onChange: (function (value) {
+                          return Curry._1(dispatch, {
+                                      TAG: /* AddTodoChange */0,
+                                      _0: value
+                                    });
+                        })
+                    })), React.createElement(Typography.H2.make, {
+                  children: "TODO"
+                }), tmp, tmp$1);
 }
 
 var make = App;
 
 export {
+  ID ,
   make ,
   
 }

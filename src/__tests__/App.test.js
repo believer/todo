@@ -32,7 +32,7 @@ test('complete todo item when clicking checkbox', () => {
   userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
   userEvent.click(screen.getByRole('checkbox', { name: /hello/i }))
 
-  expect(screen.getByText(/hello 2021/i)).toBeInTheDocument()
+  expect(screen.getByRole('checkbox', { name: /hello/i })).toBeChecked()
 })
 
 test('completed tasks can be archived', () => {
@@ -42,14 +42,16 @@ test('completed tasks can be archived', () => {
   userEvent.click(screen.getByRole('checkbox', { name: /hello/i }))
   userEvent.click(screen.getByRole('button', { name: /archive todos/i }))
 
-  expect(screen.queryByText(/hello 2021/i)).not.toBeInTheDocument()
+  expect(
+    screen.queryByRole('checkbox', { name: /hello/i })
+  ).not.toBeInTheDocument()
 })
 
 test('remove a todo', () => {
   setup()
 
   userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
-  userEvent.click(screen.getByRole('button', { name: /remove todo/i }))
+  userEvent.click(screen.getByRole('button', { name: /remove/i }))
 
   expect(screen.queryByText(/hello/i)).not.toBeInTheDocument()
 })

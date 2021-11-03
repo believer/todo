@@ -92,30 +92,44 @@ let make = () => {
       }}
       value={state.searchQuery}
     />
+    <div className="mt-2">
+      <Input
+        id="new-todo"
+        label="New todo"
+        onChange={value => {
+          dispatch(AddTodoChange(value))
+        }}
+        onKeyPress={event => {
+          if ReactEvent.Keyboard.key(event) === "Enter" {
+            dispatch(AddTodo)
+          }
+        }}
+        value={state.input}
+      />
+    </div>
     <Typography.H2> {React.string("TODO")} </Typography.H2>
-    <Input
-      id="new-todo"
-      label="New todo"
-      onChange={value => {
-        dispatch(AddTodoChange(value))
-      }}
-      onKeyPress={event => {
-        if ReactEvent.Keyboard.key(event) === "Enter" {
-          dispatch(AddTodo)
-        }
-      }}
-      value={state.input}
-    />
-    {switch Belt.Array.length(incompleteTasks) {
-    | 0 => React.string("You don't have any todos")
-    | _ => <ul> {incompleteTasks->Belt.Array.map(renderTodo)->React.array} </ul>
+    {switch (Belt.Array.length(incompleteTasks), state.searchQuery) {
+    | (0, "") => <EmptyState.NoTodos />
+    | (0, _) => <EmptyState.NoSearchResults query={state.searchQuery} />
+    | _ => <ul className="mt-4"> {incompleteTasks->Belt.Array.map(renderTodo)->React.array} </ul>
     }}
-    {switch Belt.Array.length(completedTasks) {
-    | 0 => React.null
+    {switch (Belt.Array.length(state.todos), Belt.Array.length(completedTasks), state.searchQuery) {
+    | (_, 0, "")
+    | (0, 0, _) => React.null
+    | (todos, 0, _) if todos > 0 => <>
+        <Typography.H2> {React.string("Done")} </Typography.H2>
+        <EmptyState.NoSearchResults query={state.searchQuery} />
+      </>
     | _ => <>
         <Typography.H2> {React.string("Done")} </Typography.H2>
-        <ul> {completedTasks->Belt.Array.map(renderTodo)->React.array} </ul>
-        <button onClick={_ => dispatch(ArchiveTodos)}> {React.string("Archive todos")} </button>
+        <ul className="mt-4"> {completedTasks->Belt.Array.map(renderTodo)->React.array} </ul>
+        <div className="flex justify-end">
+          <button
+            className="mt-4 bg-red-100 text-red-800 rounded px-2 py-1"
+            onClick={_ => dispatch(ArchiveTodos)}>
+            {React.string("Archive todos")}
+          </button>
+        </div>
       </>
     }}
   </div>

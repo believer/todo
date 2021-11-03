@@ -20,9 +20,13 @@ function TodoItem(Props) {
   var setTodoState = match$1[1];
   var tmp;
   if (match$1[0]) {
-    tmp = React.createElement("label", undefined, React.createElement("span", {
+    tmp = React.createElement("label", {
+          className: "flex-1"
+        }, React.createElement("span", {
               className: "sr-only"
-            }, Todo.content(todo)), React.createElement("input", {
+            }, Todo.content(todo)), React.createElement("textarea", {
+              className: "w-full",
+              autoFocus: true,
               type: "text",
               value: todoContent,
               onKeyPress: (function ($$event) {
@@ -43,26 +47,32 @@ function TodoItem(Props) {
             }));
   } else {
     var tmp$1;
-    tmp$1 = todo.TAG === /* Complete */0 ? " " + todo.completionDate.toISOString() : null;
+    tmp$1 = todo.TAG === /* Complete */0 ? React.createElement("span", {
+            className: "text-xs text-gray-400 block mt-1"
+          }, " " + todo.completionDate.toISOString()) : null;
     tmp = React.createElement("button", {
+          className: "justify-between flex-1 text-left overflow-hidden text-sm",
           onClick: (function (param) {
               return Curry._1(setTodoState, (function (param) {
                             return /* Updating */1;
                           }));
             })
-        }, Todo.content(todo), tmp$1);
+        }, React.createElement("span", undefined, Todo.content(todo)), tmp$1);
   }
   return React.createElement("li", {
-              className: "flex items-center space-x-2"
-            }, React.createElement("label", undefined, React.createElement("input", {
+              className: "flex space-x-4"
+            }, React.createElement("label", {
+                  className: "bg-gray-100 py-1 px-2"
+                }, React.createElement("input", {
                       checked: Todo.isComplete(todo),
                       type: "checkbox",
                       onChange: onToggle
                     }), React.createElement("span", {
                       className: "sr-only"
                     }, Todo.content(todo))), tmp, React.createElement("button", {
+                  className: "text-sm self-start",
                   onClick: onRemove
-                }, "Remove todo"));
+                }, "Remove"));
 }
 
 var make = TodoItem;

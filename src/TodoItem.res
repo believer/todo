@@ -5,25 +5,32 @@ let make = (~todo, ~onToggle, ~onRemove, ~onUpdate) => {
   let (todoContent, setTodoContent) = React.useState(() => Todo.content(todo))
   let (todoState, setTodoState) = React.useState(() => Idle)
 
-  <li className="flex items-center space-x-2">
-    <label>
+  <li className="flex space-x-4">
+    <label className="bg-gray-100 py-1 px-2">
       <input checked={Todo.isComplete(todo)} type_="checkbox" onChange={onToggle} />
       <span className="sr-only"> {todo->Todo.content->React.string} </span>
     </label>
     {switch todoState {
     | Idle =>
-      <button onClick={_ => setTodoState(_ => Updating)}>
-        {todo->Todo.content->React.string}
+      <button
+        className="justify-between flex-1 text-left overflow-hidden text-sm"
+        onClick={_ => setTodoState(_ => Updating)}>
+        <span> {todo->Todo.content->React.string} </span>
         {switch todo {
-        | Complete({completionDate}) => React.string(" " ++ completionDate->Js.Date.toISOString)
+        | Complete({completionDate}) =>
+          <span className="text-xs text-gray-400 block mt-1">
+            {React.string(" " ++ completionDate->Js.Date.toISOString)}
+          </span>
         | Incomplete(_) => React.null
         }}
       </button>
 
     | Updating =>
-      <label>
+      <label className="flex-1">
         <span className="sr-only"> {todo->Todo.content->React.string} </span>
-        <input
+        <textarea
+          autoFocus={true}
+          className="w-full"
           type_="text"
           onChange={event => {
             let value = ReactEvent.Form.target(event)["value"]
@@ -39,6 +46,6 @@ let make = (~todo, ~onToggle, ~onRemove, ~onUpdate) => {
         />
       </label>
     }}
-    <button onClick=onRemove> {React.string("Remove todo")} </button>
+    <button className="text-sm self-start" onClick=onRemove> {React.string("Remove")} </button>
   </li>
 }
