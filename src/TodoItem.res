@@ -20,7 +20,9 @@ let make = (~todo, ~onToggle, ~onRemove, ~onUpdate) => {
         {switch todo {
         | Complete({completionDate}) =>
           <span className="text-xs text-gray-400 block mt-1">
-            {React.string(" " ++ completionDate->Js.Date.toISOString)}
+            {React.string(
+              " " ++ Intl.DateTime.make(~date=completionDate, ~locale=Some("sv-SE"), ()),
+            )}
           </span>
         | Incomplete(_) => React.null
         }}

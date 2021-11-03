@@ -4,6 +4,8 @@ import * as Icon from "./Icon.bs.js";
 import * as Todo from "./Todo.bs.js";
 import * as Curry from "rescript/lib/es6/curry.js";
 import * as React from "react";
+import * as DateTime from "@opendevtools/rescript-intl/src/DateTime.bs.js";
+import * as Caml_option from "rescript/lib/es6/caml_option.js";
 
 function TodoItem(Props) {
   var todo = Props.todo;
@@ -55,7 +57,7 @@ function TodoItem(Props) {
     var tmp$1;
     tmp$1 = todo.TAG === /* Complete */0 ? React.createElement("span", {
             className: "text-xs text-gray-400 block mt-1"
-          }, " " + todo.completionDate.toISOString()) : null;
+          }, " " + DateTime.make(Caml_option.some(todo.completionDate), "sv-SE", undefined, undefined)) : null;
     tmp = React.createElement("button", {
           className: "justify-between flex-1 text-left overflow-hidden text-sm py-2",
           onClick: (function (param) {
