@@ -4,7 +4,7 @@ import * as React from "react";
 
 function EmptyState$NoTodos(Props) {
   return React.createElement("div", {
-              className: "bg-gray-100 p-8 mt-4 text-center text-sm text-gray-600 rounded"
+              className: "bg-gray-100 p-8 mt-4 text-center text-sm text-gray-600 rounded dark:bg-gray-800 dark:text-gray-200"
             }, "You don't have any todos. Add one using the input above.");
 }
 
@@ -15,7 +15,7 @@ var NoTodos = {
 function EmptyState$NoSearchResults(Props) {
   var query = Props.query;
   return React.createElement("div", {
-              className: "bg-gray-100 p-8 mt-4 text-center text-sm text-gray-600 rounded"
+              className: "bg-gray-100 p-8 mt-4 text-center text-sm text-gray-600 rounded dark:bg-gray-800 dark:text-gray-200"
             }, "There are no todos that match ", React.createElement("strong", undefined, query));
 }
 

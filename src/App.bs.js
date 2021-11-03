@@ -197,7 +197,7 @@ function App(Props) {
             }, Belt_Array.map(completedTasks, renderTodo)), React.createElement("div", {
               className: "flex justify-end"
             }, React.createElement("button", {
-                  className: "mt-4 bg-red-100 text-red-800 rounded px-2 py-1",
+                  className: "mt-4 bg-red-100 text-red-800 rounded px-2 py-1 dark:bg-red-300 dark:text-red-900",
                   onClick: (function (param) {
                       return Curry._1(dispatch, /* ArchiveTodos */1);
                     })

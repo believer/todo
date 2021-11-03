@@ -22,11 +22,11 @@ function TodoItem(Props) {
   var tmp;
   if (match$1[0]) {
     tmp = React.createElement("label", {
-          className: "flex-1"
+          className: "flex-1 py-2"
         }, React.createElement("span", {
               className: "sr-only"
             }, Todo.content(todo)), React.createElement("textarea", {
-              className: "w-full",
+              className: "w-full dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-300",
               autoFocus: true,
               type: "text",
               value: todoContent.trim(),
@@ -57,7 +57,7 @@ function TodoItem(Props) {
             className: "text-xs text-gray-400 block mt-1"
           }, " " + todo.completionDate.toISOString()) : null;
     tmp = React.createElement("button", {
-          className: "justify-between flex-1 text-left overflow-hidden text-sm py-1",
+          className: "justify-between flex-1 text-left overflow-hidden text-sm py-2",
           onClick: (function (param) {
               return Curry._1(setTodoState, (function (param) {
                             return /* Updating */1;
@@ -66,9 +66,9 @@ function TodoItem(Props) {
         }, React.createElement("span", undefined, Todo.content(todo)), tmp$1);
   }
   return React.createElement("li", {
-              className: "flex space-x-4 items-stretch bg-gray-100 border-gray-100 border pr-2 rounded"
+              className: "flex space-x-4 items-stretch bg-gray-100 dark:bg-gray-800 border-gray-100 pr-2 rounded"
             }, React.createElement("label", {
-                  className: "bg-gray-200 flex items-center px-2"
+                  className: "bg-gray-200 dark:bg-gray-700 flex items-center px-2"
                 }, React.createElement("input", {
                       checked: Todo.isComplete(todo),
                       type: "checkbox",

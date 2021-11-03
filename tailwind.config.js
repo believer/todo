@@ -6,7 +6,12 @@ module.exports = {
     extend: {},
   },
   variants: {
-    extend: {},
+    extend: {
+      ringWidth: ['hover', 'group-hover'],
+      ringOffsetWidth: ['hover', 'group-hover'],
+      ringColor: ['hover', 'group-hover'],
+      ringOffsetColor: ['hover', 'group-hover'],
+    },
   },
   plugins: [],
 }

@@ -130,7 +130,7 @@ let make = () => {
         </ul>
         <div className="flex justify-end">
           <button
-            className="mt-4 bg-red-100 text-red-800 rounded px-2 py-1"
+            className="mt-4 bg-red-100 text-red-800 rounded px-2 py-1 dark:bg-red-300 dark:text-red-900"
             onClick={_ => dispatch(ArchiveTodos)}>
             {React.string("Archive todos")}
           </button>

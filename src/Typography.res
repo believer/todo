@@ -8,6 +8,6 @@ module H1 = {
 module H2 = {
   @react.component
   let make = (~children) => {
-    <h2 className="text-xl font-bold my-4 pb-1 border-b"> children </h2>
+    <h2 className="text-xl font-bold my-4 pb-1 border-b dark:border-gray-800"> children </h2>
   }
 }

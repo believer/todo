@@ -11,7 +11,7 @@ function Input(Props) {
   var onKeyPress = Props.onKeyPress;
   var onChange = Props.onChange;
   var tmp = {
-    className: "border-2 border-coolGray-300 py-2 px-4 rounded-sm w-full appearance-none bg-transparent dark:border-coolGray-600 focus:outline-none focus:ring-2 focus:ring-offset-4 dark:focus:ring-offset-coolGray-800 focus:ring-pink-300",
+    className: "border-2 border-gray-300 dark:border-gray-600 py-2 px-4 rounded-sm w-full appearance-none bg-transparent dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-4 dark:focus:ring-offset-gray-800 focus:ring-pink-300",
     id: id,
     type: "text",
     value: value,
@@ -23,7 +23,7 @@ function Input(Props) {
     tmp.onKeyPress = Caml_option.valFromOption(onKeyPress);
   }
   return React.createElement(React.Fragment, undefined, React.createElement("label", {
-                  className: "block text-sm font-bold text-gray-700 mb-2",
+                  className: "block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2",
                   htmlFor: id
                 }, label), React.createElement("input", tmp));
 }

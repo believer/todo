@@ -16,7 +16,7 @@ var H1 = {
 function Typography$H2(Props) {
   var children = Props.children;
   return React.createElement("h2", {
-              className: "text-xl font-bold my-4 pb-1 border-b"
+              className: "text-xl font-bold my-4 pb-1 border-b dark:border-gray-800"
             }, children);
 }
 
