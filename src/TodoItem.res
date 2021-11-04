@@ -7,7 +7,7 @@ let make = (~todo, ~onToggle, ~onRemove, ~onUpdate) => {
 
   <li
     className="flex space-x-4 items-stretch bg-gray-100 dark:bg-gray-800 border-gray-100 pr-2 rounded">
-    <label className="bg-gray-200 dark:bg-gray-700 flex items-center px-2">
+    <label className="bg-gray-200 dark:bg-gray-700 flex items-center px-2 rounded-l">
       <input checked={Todo.isComplete(todo)} type_="checkbox" onChange={onToggle} />
       <span className="sr-only"> {todo->Todo.content->React.string} </span>
     </label>

@@ -70,7 +70,7 @@ function TodoItem(Props) {
   return React.createElement("li", {
               className: "flex space-x-4 items-stretch bg-gray-100 dark:bg-gray-800 border-gray-100 pr-2 rounded"
             }, React.createElement("label", {
-                  className: "bg-gray-200 dark:bg-gray-700 flex items-center px-2"
+                  className: "bg-gray-200 dark:bg-gray-700 flex items-center px-2 rounded-l"
                 }, React.createElement("input", {
                       checked: Todo.isComplete(todo),
                       type: "checkbox",

@@ -5,7 +5,7 @@ let make = (~label, ~id, ~value, ~onKeyPress=?, ~onChange) => {
       {React.string(label)}
     </label>
     <input
-      className="border-2 border-gray-300 dark:border-gray-600 py-2 px-4 rounded-sm w-full appearance-none bg-transparent dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-4 dark:focus:ring-offset-gray-800 focus:ring-pink-300"
+      className="border-2 border-gray-300 dark:border-gray-600 py-2 px-4 rounded w-full appearance-none bg-transparent dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-4 dark:focus:ring-offset-gray-800 focus:ring-pink-300"
       id
       type_="text"
       onChange={event => {
