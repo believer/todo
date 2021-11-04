@@ -5,6 +5,8 @@
 This is a TODO application built using [ReScript](https://rescript-lang.org/)
 and [TailwindCSS](https://tailwindcss.com/). The compiled output, `*.bs.js` files, have been included to display what the compiled output looks like.
 
+Deployed at https://todo.willcodefor.beer/
+
 ## Run project locally
 
 ```sh
