@@ -101,7 +101,7 @@ test('can not update todos with empty value', () => {
 
   userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
   userEvent.click(screen.getByRole('button', { name: /hello/i }))
-  // enter, enter to check for new lines
+  // enter, enter to check that new lines won't trigger the empty check
   userEvent.type(
     screen.getByRole('textbox', { name: /hello/i }),
     '{selectall}{del}{enter}{enter}'
@@ -109,4 +109,33 @@ test('can not update todos with empty value', () => {
 
   // Textbox hasn't closed because empty items are not allowed
   expect(screen.getByRole('textbox', { name: /hello/i })).toBeInTheDocument()
+})
+
+test('displays empty state when no search results match', () => {
+  setup()
+
+  userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
+  userEvent.type(screen.getByLabelText(/search/i), 'goede')
+
+  // Custom matcher to find the search empty state as well as the query
+  // which is contained in a <strong> separate from the starting text
+  screen.getByText((content, node) => {
+    const hasText = (node) =>
+      node.textContent === 'There are no todos that match goede'
+    const nodeHasText = hasText(node)
+    const childrenDontHaveText = Array.from(node.children).every(
+      (child) => !hasText(child)
+    )
+
+    return nodeHasText && childrenDontHaveText
+  })
+})
+
+test('when searching do not display results for completed todos if no todos have been completed', () => {
+  setup()
+
+  userEvent.type(screen.getByLabelText(/new todo/i), 'Hello{enter}')
+  userEvent.type(screen.getByLabelText(/search/i), 'goede')
+
+  expect(screen.queryByText(/done/i)).not.toBeInTheDocument()
 })

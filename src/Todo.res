@@ -29,6 +29,9 @@ let updateContent = (todo, updatedTodo) =>
 let contentMatchesSearch = (todo, query) =>
   content(todo)->Js.String2.toLowerCase->Js.String2.includes(query->Js.String2.toLowerCase)
 
+let totalNumberOfCompleted = todos =>
+  todos->Belt.Array.keep(((_, todo)) => isComplete(todo))->Belt.Array.length
+
 let completed = (todos, query) =>
   todos->Belt.Array.keep(((_, todo)) => {
     switch (isComplete(todo), query) {

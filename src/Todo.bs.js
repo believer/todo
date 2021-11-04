@@ -48,6 +48,12 @@ function contentMatchesSearch(todo, query) {
   return todo.content.toLowerCase().includes(query.toLowerCase());
 }
 
+function totalNumberOfCompleted(todos) {
+  return Belt_Array.keep(todos, (function (param) {
+                return isComplete(param[1]);
+              })).length;
+}
+
 function completed(todos, query) {
   return Belt_Array.keep(todos, (function (param) {
                 var todo = param[1];
@@ -78,6 +84,7 @@ export {
   content ,
   updateContent ,
   contentMatchesSearch ,
+  totalNumberOfCompleted ,
   completed ,
   incomplete ,
   

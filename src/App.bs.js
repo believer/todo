@@ -121,8 +121,8 @@ function App(Props) {
       });
   var dispatch = match[1];
   var state = match[0];
-  var incompleteTasks = Todo.incomplete(state.todos, state.searchQuery);
-  var completedTasks = Todo.completed(state.todos, state.searchQuery);
+  var filteredIncompleteTodos = Todo.incomplete(state.todos, state.searchQuery);
+  var filteredCompleteTodos = Todo.completed(state.todos, state.searchQuery);
   var renderTodo = function (param) {
     var id = param[0];
     return React.createElement(TodoItem.make, {
@@ -149,59 +149,42 @@ function App(Props) {
                 key: id
               });
   };
-  var match$1 = incompleteTasks.length;
+  var match$1 = filteredIncompleteTodos.length;
   var match$2 = state.searchQuery;
   var tmp;
   tmp = match$1 !== 0 ? React.createElement("ul", {
           className: "mt-4 space-y-1"
-        }, Belt_Array.map(incompleteTasks, renderTodo)) : (
+        }, Belt_Array.map(filteredIncompleteTodos, renderTodo)) : (
       match$2 === "" ? React.createElement(EmptyState.NoTodos.make, {}) : React.createElement(EmptyState.NoSearchResults.make, {
               query: state.searchQuery
             })
     );
-  var match$3 = state.todos.length;
-  var match$4 = completedTasks.length;
-  var match$5 = state.searchQuery;
+  var match$3 = Todo.totalNumberOfCompleted(state.todos);
+  var match$4 = filteredCompleteTodos.length;
   var tmp$1;
   var exit = 0;
-  var exit$1 = 0;
-  var exit$2 = 0;
-  if (match$4 !== 0 || match$5 !== "") {
-    exit$2 = 3;
+  if (match$3 !== 0 || match$4 !== 0) {
+    exit = 1;
   } else {
     tmp$1 = null;
   }
-  if (exit$2 === 3) {
-    if (match$3 !== 0 || match$4 !== 0) {
-      exit$1 = 2;
-    } else {
-      tmp$1 = null;
-    }
-  }
-  if (exit$1 === 2) {
-    if (match$4 !== 0 || match$3 <= 0) {
-      exit = 1;
-    } else {
-      tmp$1 = React.createElement(React.Fragment, undefined, React.createElement(Typography.H2.make, {
+  if (exit === 1) {
+    tmp$1 = match$4 !== 0 ? React.createElement(React.Fragment, undefined, React.createElement(Typography.H2.make, {
+                children: "Done"
+              }), React.createElement("ul", {
+                className: "mt-4 space-y-1"
+              }, Belt_Array.map(filteredCompleteTodos, renderTodo)), React.createElement("div", {
+                className: "flex justify-end"
+              }, React.createElement("button", {
+                    className: "mt-4 bg-red-100 text-red-800 rounded px-2 py-1 dark:bg-red-300 dark:text-red-900",
+                    onClick: (function (param) {
+                        return Curry._1(dispatch, /* ArchiveTodos */1);
+                      })
+                  }, "Archive todos"))) : React.createElement(React.Fragment, undefined, React.createElement(Typography.H2.make, {
                 children: "Done"
               }), React.createElement(EmptyState.NoSearchResults.make, {
                 query: state.searchQuery
               }));
-    }
-  }
-  if (exit === 1) {
-    tmp$1 = React.createElement(React.Fragment, undefined, React.createElement(Typography.H2.make, {
-              children: "Done"
-            }), React.createElement("ul", {
-              className: "mt-4 space-y-1"
-            }, Belt_Array.map(completedTasks, renderTodo)), React.createElement("div", {
-              className: "flex justify-end"
-            }, React.createElement("button", {
-                  className: "mt-4 bg-red-100 text-red-800 rounded px-2 py-1 dark:bg-red-300 dark:text-red-900",
-                  onClick: (function (param) {
-                      return Curry._1(dispatch, /* ArchiveTodos */1);
-                    })
-                }, "Archive todos")));
   }
   return React.createElement("div", {
               className: "mt-8 max-w-sm mx-5 md:mx-auto"
