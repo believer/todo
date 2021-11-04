@@ -119,16 +119,10 @@ test('displays empty state when no search results match', () => {
 
   // Custom matcher to find the search empty state as well as the query
   // which is contained in a <strong> separate from the starting text
-  screen.getByText((content, node) => {
-    const hasText = (node) =>
+  screen.getByText(
+    (content, node) =>
       node.textContent === 'There are no todos that match goede'
-    const nodeHasText = hasText(node)
-    const childrenDontHaveText = Array.from(node.children).every(
-      (child) => !hasText(child)
-    )
-
-    return nodeHasText && childrenDontHaveText
-  })
+  )
 })
 
 test('when searching do not display results for completed todos if no todos have been completed', () => {
