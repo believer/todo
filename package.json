@@ -10,7 +10,8 @@
     "start": "cross-env BS_WATCH_CLEAR=true rescript build -w",
     "test": "is-ci-cli test:ci test:watch",
     "test:ci": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "vercel-build": "npm run build && npm run build:production"
   },
   "keywords": [
     "ReScript"
